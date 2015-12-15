@@ -13,14 +13,32 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String FORECASTFRAGMENT_TAG = "forecast_fragmetn";
+    private String mLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Store the current location
+        //Begin the fragment transaction
+        mLocation = Utility.getPreferredLocation(this);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(),FORECASTFRAGMENT_TAG)
                     .commit();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //If location has changed the need to reflect the data for the new location
+        if (mLocation != Utility.getPreferredLocation(this)) {
+            //Get the reference of the fragment by using the fragment tag
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            ff.onLocationChanged();
+            //Store the current updated location
+            mLocation = Utility.getPreferredLocation(this);
         }
     }
 

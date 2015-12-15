@@ -6,11 +6,11 @@
     <string name="action_settings">Settings</string>
     <string name="action_refresh" translatable="false">Refresh</string>
     <string name="title_activity_detail">DetailActivity</string>
-    <string name="title_activity_detail_activyt">DetailActivyt</string>
+    <string name="title_activity_detail_activity">DetailActivity</string>
     <string name="title_activity_settings">Settings Activity</string>
     <string name="pref_location_key" translatable="false">location</string>
     <string name="pref_location_title">Location</string>
-    <string name="pref_location_default_value" translatable="false">ne65dr</string>
+    <string name="pref_location_default_value" translatable="false">London</string>
     <string name="pref_unit_key">unit</string>
     <string name="pref_unit_title">Unit</string>
     <string name="pref_unit_default_value">metric</string>
