@@ -4,7 +4,7 @@ package com.example.android.sunshine.app;
  * Created by debashispaul on 29/11/2015.
  */
 
-import android.content.Intent;
+import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,8 +27,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private static final int SUNSHINE_LOADER_ID = 0;
-    ForecastAdapter mForecastAdapter;
-    ListView listView;
+    protected ForecastAdapter mForecastAdapter;
+    private ListView listView;
+    private int mListCurPos;
+    private final static String LIST_CURR_POS = "current_position";
+    private Callback mCallback;
     public static final String WEATHER_DATA = "weather_data";
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -44,7 +48,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
             WeatherContract.LocationEntry.COLUMN_COORD_LAT,
-            WeatherContract.LocationEntry.COLUMN_COORD_LONG
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG,
+            WeatherContract.LocationEntry.COLUMN_CITY_NAME
     };
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
     // must change.
@@ -57,6 +62,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_WEATHER_CONDITION_ID = 6;
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
+    static final int COL_CITY_NAME = 9;
 
     public ForecastFragment() {
     }
@@ -88,13 +94,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(SUNSHINE_LOADER_ID,null,this);
+        getLoaderManager().initLoader(SUNSHINE_LOADER_ID, null, this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //Retrieve the current position of the selected item
+        if (savedInstanceState != null && savedInstanceState.containsKey(LIST_CURR_POS)) {
+            mListCurPos = savedInstanceState.getInt(LIST_CURR_POS);
+        }
         //inflate the view before referring any view using id
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -104,19 +114,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
+                mListCurPos = position;
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-                            ));
-                    startActivity(intent);
+                    Uri uri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting,
+                            cursor.getLong(COL_WEATHER_DATE));
+                    mCallback.onItemSelected(uri);
                 }
             }
         });
@@ -124,10 +132,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         return rootView;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mListCurPos != ListView.INVALID_POSITION) {
+            outState.putInt(LIST_CURR_POS, mListCurPos);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    //This method ensure the loader is restarted whenever the location is changed
     public void onLocationChanged () {
         updateWeather();
-        getLoaderManager().restartLoader(SUNSHINE_LOADER_ID,null,this);
+        getLoaderManager().restartLoader(SUNSHINE_LOADER_ID, null, this);
     }
+
+    //Stores the updated location
     private void updateWeather() {
         String location = Utility.getPreferredLocation(getActivity());
         (new FetchWeatherTask(getActivity())).execute(location);
@@ -160,10 +179,54 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mForecastAdapter.swapCursor(data);
+        //position the list to current position
+        if(mListCurPos != ListView.INVALID_POSITION) {
+            listView.smoothScrollToPosition(mListCurPos);
+        }
+       // selectFirstItem(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mForecastAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (Callback) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement Callback interface");
+        }
+    }
+
+    //Following piece of code was to select and detail display first item for tablet but it's not working :(
+//    public void selectFirstItem(Cursor cur) {
+//        if (mForecastAdapter.getTodayLaout()) {
+//            Log.d(LOG_TAG,"Phone, so no need to select the first list item");
+//        } else {
+//            Log.d(LOG_TAG,"Tablet, so need to select the first list item");
+//            listView.setItemChecked(0, true);
+//            long weatherDate = cur.getLong(COL_WEATHER_DATE);
+//            String locationSetting = Utility.getPreferredLocation(getActivity());
+//            Uri uri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, weatherDate);
+//          //  mCallback.onItemSelected(uri);
+//        }
+//    }
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
+        //public void selectTodayForTablet(Cursor cur);
     }
 }
