@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.service.SunshineService;
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -154,19 +155,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     //Stores the updated location
     private void updateWeather() {
-        String location = Utility.getPreferredLocation(getActivity());
-//        Intent intent = new Intent(getActivity(), SunshineService.class);
-//        intent.putExtra(LOCATION_NAME, location);
-//        getActivity().startService(intent);
-        //Create intent and add the extra values
-        Intent alarmIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
-        alarmIntent.putExtra(SunshineService.LOCATION_NAME_EXTRA,location);
-        //Create pending intent for AlarmReceiver
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);
-        //Create alarm manager
-        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-        //set the alarm to fire in 5 sec
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5 * 1000, pendingIntent);
+//        String location = Utility.getPreferredLocation(getActivity());
+//        Intent alarmIntent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
+//        alarmIntent.putExtra(SunshineService.LOCATION_NAME_EXTRA,location);
+//        //Create pending intent for AlarmReceiver
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);
+//        //Create alarm manager
+//        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+//        //set the alarm to fire in 5 sec
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 5 * 1000, pendingIntent);
+
+        SunshineSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
