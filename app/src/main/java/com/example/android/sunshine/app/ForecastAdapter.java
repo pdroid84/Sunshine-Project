@@ -4,7 +4,6 @@ package com.example.android.sunshine.app;
  * Created by debashispaul on 13/12/2015.
  */
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;

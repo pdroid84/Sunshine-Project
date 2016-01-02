@@ -2,16 +2,12 @@ package com.example.android.sunshine.app;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
@@ -51,6 +47,8 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
                 ff.mForecastAdapter.setTodayLaout(true);
             }
         }
+        //Initialize the syncAdapter
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
@@ -90,19 +88,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             Intent intent = new Intent(this,SettingsActivity.class);
             startActivity(intent);
             return true;
-        } else  if (id == R.id.action_map) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String location = sharedPreferences.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default_value));
-            Uri uriLocation = Uri.parse("geo:0,0?").buildUpon()
-                    .appendQueryParameter("q",location).build();
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(uriLocation);
-            if(intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            }
-            return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }

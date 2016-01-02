@@ -9,12 +9,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
-import java.util.List;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
@@ -26,7 +20,6 @@ import java.util.List;
  */
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
-    Toolbar mToolBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
