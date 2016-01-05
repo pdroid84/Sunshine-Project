@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/com.example.android.sunshine.app">
+    <!-- Following location edit text filed is a custom field -->
+    <com.example.android.sunshine.app.LocationEditTextPreference
         android:key="@string/pref_location_key"
         android:title="@string/pref_location_title"
         android:defaultValue="@string/pref_location_default_value"
         android:inputType="text"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        custom:minLength="3"/>
     <ListPreference
         android:key="@string/pref_unit_key"
         android:title="@string/pref_unit_title"
@@ -14,6 +17,7 @@
         android:entryValues="@array/pref_unit_entry_values" />
     <CheckBoxPreference
         android:key="@string/pref_notification_key"
+        android:defaultValue="true"
         android:title="@string/pref_notification_title"
         android:summaryOff="@string/pref_notification_summary_off"
         android:summaryOn="@string/pref_notification_summary_on" />

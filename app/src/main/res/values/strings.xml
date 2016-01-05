@@ -52,11 +52,26 @@
     <string name="format_notification">
     Forecast: <xliff:g id="condition">%1$s</xliff:g> High: <xliff:g id="high">%2$s</xliff:g> Low: <xliff:g id="low">%3$s</xliff:g>
     </string>
+
+    <string name="pref_location_status_key">location_stat</string>
+
     <!-- Strings related to Notification preference -->
     <string name="pref_last_notification">last_notification</string>
     <string name="pref_notification_summary_off">Notification is off</string>
     <string name="pref_notification_summary_on">Notification is on</string>
     <string name="pref_notification_key">notification</string>
     <string name="pref_notification_title">Notification</string>
+    <string name="pref_enable_notifications_default" translatable="false">true</string>
     <string name="pref_notification_summary">Notification Summary</string>
+
+    <!-- Strings related to error handling -->
+    <string name="empty_forecast_message">No weather information is currently available</string>
+    <string name="empty_forecast_no_network_message">No weather information available. The network is not available to fetch the weather data.</string>
+    <string name="empty_forecast_list_server_down">No weather information available. The server is not returning data.</string>
+    <string name="empty_forecast_list_server_error">No weather information available. The server is not returning valid data. Please check for an updated version of Sunshine.</string>
+    <string name="empty_forecast_list_invalid_location">No weather information available. The location in settings is not recognized by the weather server.</string>
+
+    <!-- Strings used when displaying the state of the Location in settings -->
+    <string name="pref_location_error_description">Invalid Location (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+    <string name="pref_location_unknown_description">Validating Location... (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
 </resources>

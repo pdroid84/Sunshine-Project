@@ -17,8 +17,13 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
+
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,7 +49,8 @@ public class Utility {
 
     public static boolean getNotificationFlag (Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(context.getString(R.string.pref_notification_key), false);
+        return prefs.getBoolean(context.getString(R.string.pref_notification_key),
+                Boolean.parseBoolean(context.getString(R.string.pref_enable_notifications_default)));
     }
 
     public static String formatTemperature(Context context, double temperature, boolean isMetric) {
@@ -248,5 +254,42 @@ public class Utility {
             return R.drawable.art_clouds;
         }
         return -1;
+    }
+
+    /**
+     * Helper method to provide the status of network connection
+     * @param ctx Context to use for resource localization
+     * @return true if network connection is available, otherwise false
+     */
+    public static boolean isNetworkConnectivityAvailable(Context ctx) {
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            return activeNetwork.isConnectedOrConnecting();
+        }
+        return false;
+    }
+
+    /**
+     * Helper method to get the location status from the SharedPreference
+     * @param context Context to use for PreferenceManager
+     * @return locationStatus value, default is zero
+     */
+    @SuppressWarnings("ResourceType")
+    public static @SunshineSyncAdapter.LocationStatus int getLocationStatus (Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+    }
+
+    /**
+     * Method to reset the location status to unknown. This function should not be called from the background thread
+     * because this function uses the "apply" to write to shared preference
+     * @param ctx Context to get the PreferenceManager from
+     */
+    public static void resetLocationStatus (Context ctx) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(ctx.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        editor.apply();
     }
 }
