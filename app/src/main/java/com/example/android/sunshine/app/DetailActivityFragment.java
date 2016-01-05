@@ -181,14 +181,31 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             mDetailData = String.format("%s - %s - %s/%s",dayWeek,desc,highTemp,lowTemp);
 
             mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_COND_ID)));
+            // For accessibility, add a content description to the icon field. Because the ImageView
+            // is independently focusable, it's better to have a description of the image. Usin
+            // null is appropriate when the image is purely decorative or when the image already
+            // has text describing it in the same UI component.
+            mIconView.setContentDescription(getString(R.string.a11y_forecast_icon, desc));
             mDateWeek.setText(dayWeek);
             mDateCalendar.setText(dateCal);
             mMaxView.setText(highTemp);
+            // For accessibility, add a content description to the high temp field.
+            mMaxView.setContentDescription(getString(R.string.a11y_high_temp, highTemp));
             mMinView.setText(lowTemp);
+            // For accessibility, add a content description to the low temp field.
+            mMaxView.setContentDescription(getString(R.string.a11y_low_temp,lowTemp));
             mHumidityView.setText(humidity);
+            // For accessibility, add a content description to the humidity field.
+            mHumidityView.setContentDescription(getString(R.string.format_humidity, data.getFloat(COL_WEATHER_HUMIDITY)));
             mWindView.setText(windSpeed);
+            // For accessibility, add a content description to the wind speed field.
+            mWindView.setContentDescription(mWindView.getText());
             mPressureView.setText(pressure);
+            // For accessibility, add a content description to the pressure field.
+            mPressureView.setContentDescription(mPressureView.getText());
             mDescView.setText(desc);
+            // For accessibility, add a content description to the description field.
+            mDescView.setContentDescription(getString(R.string.a11y_forecast, desc));
             mCityName.setText(MainActivity.getmCityNameData());
         }
 

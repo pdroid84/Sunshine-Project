@@ -14,8 +14,11 @@
     <uses-permission
         android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
+
+    <!-- supportsRtl will force the app to support both left-to-right (LTR) and right-to-left (RTL) text -->
     <application
         android:allowBackup="true"
+        android:supportsRtl="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/ic_logo"

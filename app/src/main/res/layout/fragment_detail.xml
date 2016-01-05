@@ -43,6 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
+            android:paddingStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:gravity="center_horizontal"
@@ -52,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -68,6 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
                     android:layout_gravity="center_horizontal"
                     android:fontFamily="sans-serif-light"
                     android:textSize="48sp"

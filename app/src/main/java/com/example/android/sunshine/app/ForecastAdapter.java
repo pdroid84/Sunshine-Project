@@ -93,6 +93,8 @@ public class ForecastAdapter extends CursorAdapter {
         String weatherForecast = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
         //Display the weather forecast
         viewHolder.forecastView.setText(weatherForecast);
+        // For accessibility, add a content description to the weather forecast description filed field.
+        viewHolder.forecastView.setContentDescription(context.getString(R.string.a11y_forecast, weatherForecast));
 
         // Read user preference for metric or imperial temperature units
         boolean isMetric = Utility.isMetric(context);
@@ -100,10 +102,14 @@ public class ForecastAdapter extends CursorAdapter {
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
         viewHolder.maxView.setText(Utility.formatTemperature(context, high, isMetric));
+        // For accessibility, add a content description to the high temp field.
+        viewHolder.maxView.setContentDescription(context.getString(R.string.a11y_high_temp, Utility.formatTemperature(context, high, isMetric)));
 
         //Read low temperature from cursor
         double min = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
         viewHolder.minView.setText(Utility.formatTemperature(context, min, isMetric));
+        // For accessibility, add a content description to the min temp field.
+        viewHolder.minView.setContentDescription(context.getString(R.string.a11y_low_temp,Utility.formatTemperature(context, min, isMetric)));
 
         //Retrieve and store the City name in MainActivity variable which is used to populate Detail view
         MainActivity.setmCityNameData(cursor.getString(ForecastFragment.COL_CITY_NAME));
