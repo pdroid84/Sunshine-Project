@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.example.android.sunshine.app.data.WeatherContract;
 
 /**
@@ -180,7 +182,14 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
             mDetailData = String.format("%s - %s - %s/%s",dayWeek,desc,highTemp,lowTemp);
 
-            mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_COND_ID)));
+            //Use Gradle to load the image
+            //mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_COND_ID)));
+            Glide.with(this)
+                    .load(Utility.getArtUrlForWeatherCondition(getActivity(),data.getInt(COL_WEATHER_COND_ID)))
+                    .error(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_COND_ID)))
+                    .crossFade()
+                    .into(mIconView);
+
             // For accessibility, add a content description to the icon field. Because the ImageView
             // is independently focusable, it's better to have a description of the image. Usin
             // null is appropriate when the image is purely decorative or when the image already

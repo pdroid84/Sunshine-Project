@@ -8,4 +8,12 @@
         <item>imperial</item>
         <item>metric</item>
     </string-array>
+    <string-array name="pref_icon_pack_entries">
+        <item>Regular</item>
+        <item>Cute Dogs</item>
+    </string-array>
+    <string-array name="pref_icon_pack_values">
+        <item>regular</item>
+        <item>cuteDogs</item>
+    </string-array>
 </resources>

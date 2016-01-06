@@ -292,4 +292,52 @@ public class Utility {
         editor.putInt(ctx.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
         editor.apply();
     }
+
+    /**
+     * Helper method to provide the art urls according to the weather condition id returned
+     * by the OpenWeatherMap call.
+     *
+     * @param context Context to use for retrieving the URL format
+     * @param weatherId from OpenWeatherMap API response
+     * @return url for the corresponding weather artwork. null if no relation is found.
+     */
+    public static String getArtUrlForWeatherCondition(Context context, int weatherId) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String iconPackStringValue = prefs.getString(context.getString(R.string.pref_icon_pack_key),
+                context.getString(R.string.pref_icon_pack_default_value));
+
+        int iconResourceId;
+        if (iconPackStringValue.equals(context.getString(R.string.pref_icon_pack_default_value))) {
+            iconResourceId = R.string.format_art_url;
+        } else {
+            iconResourceId = R.string.format_art_url_pack_cute_dogs;
+        }
+
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        if (weatherId >= 200 && weatherId <= 232) {
+            return context.getString(iconResourceId, "storm");
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return context.getString(iconResourceId, "light_rain");
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return context.getString(iconResourceId, "rain");
+        } else if (weatherId == 511) {
+            return context.getString(iconResourceId, "snow");
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return context.getString(iconResourceId, "rain");
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return context.getString(iconResourceId, "snow");
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return context.getString(iconResourceId, "fog");
+        } else if (weatherId == 761 || weatherId == 781) {
+            return context.getString(iconResourceId, "storm");
+        } else if (weatherId == 800) {
+            return context.getString(iconResourceId, "clear");
+        } else if (weatherId == 801) {
+            return context.getString(iconResourceId, "light_clouds");
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return context.getString(iconResourceId, "clouds");
+        }
+        return null;
+    }
 }

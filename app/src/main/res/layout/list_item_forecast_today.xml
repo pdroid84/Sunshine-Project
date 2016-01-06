@@ -70,7 +70,8 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:gravity="center_horizontal"
-                android:src="@drawable/ic_launcher"/>
+                android:src="@drawable/ic_launcher"
+                android:adjustViewBounds="true"/>
 
             <TextView
                 android:id="@+id/list_item_forecast_textview"

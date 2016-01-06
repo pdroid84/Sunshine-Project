@@ -14,6 +14,9 @@
     <string name="pref_unit_title">Unit</string>
     <string name="pref_unit_default_value">metric</string>
     <string name="pref_unit_value_imperial">imperial</string>
+    <string name="pref_icon_pack_key">iconPack</string>
+    <string name="pref_icon_pack_title">Icon Pack</string>
+    <string name="pref_icon_pack_default_value">regular</string>
     <string name="action_map">Map</string>
     <string name="share_item_title">Share</string>
     <string name="content_provider">Weather Content Provider</string>
@@ -83,4 +86,11 @@
 
 
     <string name="edittext_hint">Enter location for weather forecast</string>
+
+    <!-- Format for retrieving art from an external source [CHAR LIMIT=NONE] -->
+    <!-- Value in SharedPreferences for Deb art pack option [CHAR LIMIT=NONE] -->
+    <string name="format_art_url" translatable="false">https://rawgit.com/pdroid84/SyncAdapterExample/master/app/src/main/res/drawable-xxhdpi/art_%s.png</string>
+    <!-- Value in SharedPreferences for cute dogs art pack  option [CHAR LIMIT=NONE] -->
+    <string name="format_art_url_pack_cute_dogs" translatable="false">https://rawgit.com/pdroid84/WeatherIconPacks/master/Colored/art_%s.png</string>
+
 </resources>

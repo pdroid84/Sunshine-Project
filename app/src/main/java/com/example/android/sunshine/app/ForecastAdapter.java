@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
@@ -116,12 +118,19 @@ public class ForecastAdapter extends CursorAdapter {
 
         //Get the view type to determine if colour or black and white image are to be populated
         int viewTypeForIcon = getItemViewType(cursor.getPosition());
+        int fallbackIconId;
         if (viewTypeForIcon == VIEW_TODAY) {
-            viewHolder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
+            fallbackIconId = Utility.getArtResourceForWeatherCondition(cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID));
             viewHolder.mCityName.setText(MainActivity.getmCityNameData());
         } else {
-            viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)));
+            fallbackIconId = Utility.getIconResourceForWeatherCondition(cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID));
         }
+
+        Glide.with(mContext)
+                .load(Utility.getArtUrlForWeatherCondition(mContext,cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID)))
+                .error(fallbackIconId)
+                .crossFade()
+                .into(viewHolder.iconView);
     }
 
     public static class ViewHolder {

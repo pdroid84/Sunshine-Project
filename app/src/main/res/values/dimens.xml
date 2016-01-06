@@ -8,4 +8,5 @@
     <dimen name="list_item_top_margin">16dp</dimen>
     <dimen name="list_item_bottom_margin">16dp</dimen>
     <dimen name="detail_item_all_padding">16dp</dimen>
+    <dimen name="notification_large_icon_default">48dp</dimen>
 </resources>
