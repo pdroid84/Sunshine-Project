@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
@@ -20,6 +22,12 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        //Following is to ensure bach home button is not showed for main activity
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        //Following is to ensure activity title is not shown, otherwise it will push the logo in the middle
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         //Store the current location
         mLocation = Utility.getPreferredLocation(this);
         //If we rotate the phone, the system saves the fragment state in the saved state bundle
@@ -41,12 +49,12 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             mTwoPane = false;
             //get rid of an unnecessary shadow below the action bar
             getSupportActionBar().setElevation(0f);
+        }
             //Access setter method setTodayLayout of Adapter via ForecastFragment which has the member mForecastAdapter
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             if (ff != null) {
-                ff.mForecastAdapter.setTodayLaout(true);
+                ff.mForecastAdapter.setTodayLaout(!mTwoPane);
             }
-        }
         //Initialize the syncAdapter
         SunshineSyncAdapter.initializeSyncAdapter(this);
     }

@@ -1,132 +1,108 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+<!-- Detail Wide View Master layout. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/detail_item_all_padding"
-        tools:context="com.example.android.sunshine.app.DetailActivityFragment">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <!-- Day and Date -->
-            <TextView
-                android:id="@+id/detail_date_week"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-condensed"
-                android:textSize="24sp"
-                android:textColor="@android:color/black"
-                android:text="Monday"/>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/detail_date_calendar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-condensed"
-                android:textSize="20sp"
-                android:textColor="@color/grey_700"
-                android:text="Dec 22"/>
-            <TextView
-                android:id="@+id/detail_city_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@android:color/black"
-                android:text="City"/>
+            <include
+                layout="@layout/detail_today_grid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-        </LinearLayout>
+            <!-- strangely if this toolbar is copied before the inlcude then toolbar does not appear!! -->
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/my_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"/>
+        </FrameLayout>
 
-        <!-- High, Low, Art, Weather State -->
-        <LinearLayout
+        <android.support.v7.widget.GridLayout
+            android:id="@+id/detail_additional_pane"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="@color/detail_accent_pane_background"
+            android:paddingEnd="@dimen/abc_list_item_padding_horizontal_material"
+            android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+            app:columnCount="2">
+
+            <android.support.v7.widget.Space
+                app:layout_columnSpan="2"
+                app:layout_rowWeight="1"/>
 
             <TextView
-                android:id="@+id/detail_maxTempView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:textSize="96sp"
-                android:textColor="@android:color/black"
-                android:text="20"/>
+                android:id="@+id/detail_humidity_label_textview"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/abc_list_item_padding_horizontal_material"
+                android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
+                android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+                android:text="@string/humidity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/detail_accent_label"/>
 
-            <TextView
-                android:id="@+id/detail_minTempView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginStart="4dp"
-                android:fontFamily="sans-serif-light"
-                android:textSize="48sp"
-                android:textColor="@color/grey_700"
-                android:text="12"/>
-            <!-- Humidity, Wind and Pressure -->
             <TextView
                 android:id="@+id/detail_humidityView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@android:color/black"
-                android:text="Humidity"/>
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@android:color/white"
+                tools:text="38%"/>
 
             <TextView
-                android:id="@+id/detail_windView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@android:color/black"
-                android:text="Wind"/>
+                android:id="@+id/detail_pressure_label_textview"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/abc_list_item_padding_horizontal_material"
+                android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
+                android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+                android:paddingTop="@dimen/detail_view_extra_padding"
+                android:text="@string/pressure"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/detail_accent_label"/>
 
             <TextView
                 android:id="@+id/detail_pressureView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@android:color/black"
-                android:text="Pressure"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/detail_weather_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
-                android:adjustViewBounds="true"/>
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@android:color/white"
+                tools:text="995 hPa"/>
 
             <TextView
-                android:id="@+id/detail_weather_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@color/grey_700"
-                android:text="Rain Rain"/>
-        </LinearLayout>
+                android:id="@+id/detail_wind_label_textview"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
+                android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
+                android:paddingTop="@dimen/detail_view_extra_padding"
+                android:text="@string/wind"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/detail_accent_label"/>
+
+            <TextView
+                android:id="@+id/detail_windView"
+                android:fontFamily="sans-serif"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@android:color/white"
+                tools:text="4km/h NW"/>
+
+            <android.support.v7.widget.Space
+                app:layout_columnSpan="2"
+                app:layout_rowWeight="1"/>
+        </android.support.v7.widget.GridLayout>
     </LinearLayout>
-</ScrollView>
+</FrameLayout>

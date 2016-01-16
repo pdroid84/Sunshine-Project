@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="activity_main" type="layout">@layout/activity_main_twopanes</item>
-    <item name="fragment_detail" type="layout">@layout/fragment_detail_wide</item>
+    <!--now using the /layout-sw600dp/activity_main xml, so commenting out the following line -->
+    <!--<item name="activity_main" type="layout">@layout/activity_main_twopanes</item>-->
+    <item name="fragment_detail_start" type="layout">@layout/fragment_detail_wide</item>
 </resources>

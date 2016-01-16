@@ -9,7 +9,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,7 +32,7 @@ import com.example.android.sunshine.app.data.WeatherContract;
  */
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private TextView mDateWeek, mMaxView, mMinView, mHumidityView, mWindView, mPressureView, mDescView, mDateCalendar, mCityName;
+    private TextView mDateWeek, mMaxView, mMinView, mHumidityView, mWindView, mPressureView, mDescView, mDateCalendar, mCityName, mDateTextView;
     private ImageView mIconView;
     private String mDetailData;
     private ShareActionProvider mShareActionProvider;
@@ -75,9 +79,10 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             mUri = args.getParcelable(DTL_ACT_FRAG_URI);
         }
 
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        mDateWeek = (TextView) rootView.findViewById(R.id.detail_date_week);
-        mDateCalendar = (TextView) rootView.findViewById(R.id.detail_date_calendar);
+        View rootView = inflater.inflate(R.layout.fragment_detail_start, container, false);
+//        mDateWeek = (TextView) rootView.findViewById(R.id.detail_date_week);
+//        mDateCalendar = (TextView) rootView.findViewById(R.id.detail_date_calendar);
+        mDateTextView = (TextView) rootView.findViewById(R.id.detail_date_textview);
         mMaxView = (TextView) rootView.findViewById(R.id.detail_maxTempView);
         mMinView = (TextView) rootView.findViewById(R.id.detail_minTempView);
         mHumidityView = (TextView) rootView.findViewById(R.id.detail_humidityView);
@@ -88,6 +93,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         mCityName = (TextView) rootView.findViewById(R.id.detail_city_name);
         return rootView;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,8 +106,16 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Inflate the menu
-        inflater.inflate(R.menu.detailfragment, menu);
+        //Following if condition ensures that the fragment mneu (share menu) only appear for activity (i.e. for phone)
+        //on the appbar. For Tablet the fragment menu (share menu) will not be added to activity's appbar
+        if ( getActivity() instanceof DetailActivity ) {
+            // Inflate the menu, this adds items to the action bar if it is present
+            inflater.inflate(R.menu.detailfragment, menu);
+            finishCreatingMenu(menu);
+        }
+    }
+
+    private void finishCreatingMenu(Menu menu) {
         // Locate MenuItem with ShareActionProvider
         MenuItem item = menu.findItem(R.id.menu_item_share);
         // Fetch and store ShareActionProvider
@@ -118,6 +132,12 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         //Create a loader when we have valid data
         if (mUri != null) {
             getLoaderManager().initLoader(DETAIL_LOADER_ID, null, this);
+        } else {
+            //Hide the cards when there is no data to display
+            ViewParent vp = getView().getParent();
+            if ( vp instanceof CardView) {
+                ((View)vp).setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -168,6 +188,13 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        //Show the cards when we have data to display
+        if(data != null) {
+            ViewParent vp = getView().getParent();
+            if ( vp instanceof CardView ) {
+                ((View)vp).setVisibility(View.VISIBLE);
+            }
+        }
         if(data.moveToFirst()) {
             String dayWeek = Utility.getDayName(getActivity(), data.getLong(COL_WEATHER_DATE));
             String dateCal = Utility.getFormattedMonthDay(getActivity(), data.getLong(COL_WEATHER_DATE));
@@ -177,7 +204,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             String lowTemp = Utility.formatTemperature(getActivity(), data.getFloat(COL_WEATHER_MIN_TEMP), isMetric);
             String humidity = String.format(getActivity().getString(R.string.format_humidity), data.getFloat(COL_WEATHER_HUMIDITY));
             String windSpeed = Utility.getFormattedWind(getActivity(), data.getLong(COL_WEATHER_WIND_SPEED),
-                data.getLong(COL_WEATHER_WIND_DEGREE));
+                    data.getLong(COL_WEATHER_WIND_DEGREE));
             String pressure = String.format(getActivity().getString(R.string.format_pressure), data.getFloat(COL_WEATHER_PRESSURE));
 
             mDetailData = String.format("%s - %s - %s/%s",dayWeek,desc,highTemp,lowTemp);
@@ -195,8 +222,9 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             // null is appropriate when the image is purely decorative or when the image already
             // has text describing it in the same UI component.
             mIconView.setContentDescription(getString(R.string.a11y_forecast_icon, desc));
-            mDateWeek.setText(dayWeek);
-            mDateCalendar.setText(dateCal);
+            //mDateWeek.setText(dayWeek);
+            //mDateCalendar.setText(dateCal);
+            mDateTextView.setText(dayWeek+", "+dateCal);
             mMaxView.setText(highTemp);
             // For accessibility, add a content description to the high temp field.
             mMaxView.setContentDescription(getString(R.string.a11y_high_temp, highTemp));
@@ -218,6 +246,27 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             mCityName.setText(MainActivity.getmCityNameData());
         }
 
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        Toolbar toolbarView = (Toolbar) getView().findViewById(R.id.my_toolbar);
+
+        // We need to start the enter transition after the data has loaded
+        if (activity instanceof DetailActivity) {
+            activity.supportStartPostponedEnterTransition();
+
+            if ( null != toolbarView ) {
+                activity.setSupportActionBar(toolbarView);
+                activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+        } else {
+            if ( null != toolbarView ) {
+                Menu menu = toolbarView.getMenu();
+                if ( null != menu ) menu.clear();
+                toolbarView.inflateMenu(R.menu.detailfragment);
+                finishCreatingMenu(toolbarView.getMenu());
+            }
+        }
+
         if (mShareActionProvider != null)
         {
             //If onCreateOptionMenus has happened already then update the share intent
@@ -226,6 +275,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         else {
             Log.d(LOG_TAG, "Share Action Provider is null");
         }
+
     }
 
     @Override
