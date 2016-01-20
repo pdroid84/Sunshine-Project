@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -103,6 +104,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
     @Override
     public void onItemSelected(Uri dateUri) {
+        Log.v(LOG_TAG,"onItemSelected of ForecastFragment.Callback is called");
         if (mTwoPane) {
             //Create a Bundle to pass the data to Fragment
             Bundle args = new Bundle();

@@ -67,7 +67,9 @@
         android:layout_alignRight="@+id/layout_center"
         android:layout_below="@+id/appbar"
         tools:context="com.example.android.sunshine.app.ForecastFragment"
-        tools:layout="@android:layout/list_content"/>
+        tools:layout="@android:layout/list_content"
+        android:choiceMode="singleChoice"
+        app:autoSelectView="true"/>
     <!-- Set the detail fragment to the right of the above dummy center space -->
     <!-- Use actionBariSize for about_marginTop to overlap the imageview area of the app bar-->
     <!-- Also the elevation matching with the appbar is important so the detail view doesn't get occluded
