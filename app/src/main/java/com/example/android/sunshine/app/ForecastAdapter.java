@@ -7,6 +7,7 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -92,12 +93,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder viewHolder, int position) {
-        Log.v(LOG_TAG,"onBindViewHolder is called");
+        Log.v(LOG_TAG, "onBindViewHolder is called");
         // move the cursor to correct position
         mCursor.moveToPosition(position);
 
         // Read weather icon ID from cursor
-        int weatherId = mCursor.getInt(ForecastFragment.COL_WEATHER_ID);
+        //int weatherId = mCursor.getInt(ForecastFragment.COL_WEATHER_ID);
         // Use placeholder image for now
         viewHolder.iconView.setImageResource(R.drawable.ic_launcher);
 
@@ -152,6 +153,10 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
                 .error(fallbackIconId)
                 .crossFade()
                 .into(viewHolder.iconView);
+
+        // this enables better animations. even if we lose state due to a device rotation,
+        // the animator can use this to re-find the original view
+        ViewCompat.setTransitionName(viewHolder.iconView, "iconView" + position);
 
         mICM.onBindViewHolder(viewHolder, position);
     }

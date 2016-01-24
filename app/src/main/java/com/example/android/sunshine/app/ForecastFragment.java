@@ -4,18 +4,22 @@ package com.example.android.sunshine.app;
  * Created by debashispaul on 29/11/2015.
  */
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -30,7 +34,6 @@ import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
@@ -47,6 +50,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private int mChoiceMode;
     private boolean mAutoSelectView;
     private Callback mCallback;
+    private boolean mHoldForTransition;
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
@@ -107,6 +111,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        // We hold for transition here just in-case the activity
+        // needs to be re-created. In a standard return transition,
+        // this doesn't actually make a difference.
+        if ( mHoldForTransition ) {
+            getActivity().supportPostponeEnterTransition();
+        }
         getLoaderManager().initLoader(SUNSHINE_LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
     }
@@ -118,6 +128,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 0, 0);
         mChoiceMode = a.getInt(R.styleable.ForecastFragment_android_choiceMode, AbsListView.CHOICE_MODE_NONE);
         mAutoSelectView = a.getBoolean(R.styleable.ForecastFragment_autoSelectView, false);
+        mHoldForTransition = a.getBoolean(R.styleable.ForecastFragment_sharedElementTransition,false);
         a.recycle();
     }
 
@@ -148,11 +159,48 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 Uri uri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting,
                         date);
                 mPosition =vh.getAdapterPosition();
-                mCallback.onItemSelected(uri);
+                mCallback.onItemSelected(uri, vh);
             }
         }, mEmptyTextView, mChoiceMode);
         //Now attach the adapter to the recyclerview
         mRecyclerView.setAdapter(mForecastAdapter);
+        final View parallaxView = rootView.findViewById(R.id.parallax_bar);
+        //Attach a onScrollListener for scrolling
+        if (null != parallaxView) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        int max = parallaxView.getHeight();
+                        if (dy > 0) {
+                            parallaxView.setTranslationY(Math.max(-max, parallaxView.getTranslationY() - dy / 2));
+                        } else {
+                            parallaxView.setTranslationY(Math.min(0, parallaxView.getTranslationY() - dy / 2));
+                        }
+                    }
+                });
+            }
+        }
+
+        final AppBarLayout appbarView = (AppBarLayout)rootView.findViewById(R.id.appbar);
+        if (null != appbarView) {
+            ViewCompat.setElevation(appbarView, 0);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        if (0 == mRecyclerView.computeVerticalScrollOffset()) {
+                            appbarView.setElevation(0);
+                        } else {
+                            appbarView.setElevation(appbarView.getTargetElevation());
+                        }
+                    }
+                });
+            }
+        }
 
         // If there's instance state, mine it for useful information.
         // The end-goal here is that the user never knows that turning their device sideways
@@ -169,7 +217,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
         return rootView;
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -196,6 +243,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         super.onResume();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (null != mRecyclerView) {
+            mRecyclerView.clearOnScrollListeners();
+        }
+    }
     //This method ensure the loader is restarted whenever the location is changed
     public void onLocationChanged () {
         updateWeather();
@@ -241,7 +295,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         }
         updateEmptyView();
         // selectFirstItem(data);
-        if ( data.getCount() > 0 ) {
+        if ( data.getCount() == 0 ) {
+            getActivity().supportStartPostponedEnterTransition();
+        } else {
             mRecyclerView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
@@ -254,6 +310,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                         RecyclerView.ViewHolder vh = mRecyclerView.findViewHolderForAdapterPosition(itemPosition);
                         if ( null != vh && mAutoSelectView ) {
                             mForecastAdapter.selectView( vh );
+                        }
+                        if ( mHoldForTransition ) {
+                            getActivity().supportStartPostponedEnterTransition();
                         }
                         return true;
                     }
@@ -300,7 +359,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
-        public void onItemSelected(Uri dateUri);
+        public void onItemSelected(Uri dateUri, ForecastAdapter.ForecastAdapterViewHolder vh);
         //public void selectTodayForTablet(Cursor cur);
     }
 

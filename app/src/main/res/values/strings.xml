@@ -96,4 +96,7 @@
     <string name="pressure">Pressure</string>
     <string name="wind">Wind</string>
 
+    <!-- For Shared Element Transitions -->
+    <string name="detail_icon_transition_name" translatable="false">TN_DetailIcon</string>
+
 </resources>

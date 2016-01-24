@@ -36,4 +36,9 @@
         <item name="popupTheme">@style/Theme.AppCompat.Light</item>
     </style>
 
+    <!-- New styles for transition -->
+    <style name="AppTheme.Main" parent="@style/AppTheme"/>
+
+    <style name="AppTheme.Details" parent="@style/AppTheme"/>
+
 </resources>

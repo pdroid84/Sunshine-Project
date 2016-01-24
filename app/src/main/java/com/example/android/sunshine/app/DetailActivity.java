@@ -16,6 +16,7 @@ public class DetailActivity extends ActionBarActivity  {
             Bundle args = new Bundle();
             //Get the data from the intent and put that to Bundle
             args.putParcelable(DetailActivityFragment.DTL_ACT_FRAG_URI, getIntent().getData());
+            args.putBoolean(DetailActivityFragment.DETAIL_TRANSITION_ANIMATION, true);
 
             //Create a DetailActivityFragment
             DetailActivityFragment dFragment = new DetailActivityFragment();
@@ -25,6 +26,9 @@ public class DetailActivity extends ActionBarActivity  {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.weather_detail_container, dFragment)
                     .commit();
+
+            // Being here means we are in animation mode
+            supportPostponeEnterTransition();
         }
     }
 }
