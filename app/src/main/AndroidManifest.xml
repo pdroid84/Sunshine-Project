@@ -88,6 +88,38 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCz50WuXh1WiLGaQYHun0BPa9W6cPYFWsg"/>
+
+        <!-- Today Widget -->
+    <receiver android:name=".widget.TodayAppWidgetProvider"
+        android:label="@string/title_widget_today">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            <action android:name="com.example.android.sunshine.app.ACTION_DATA_UPDATED" />
+        </intent-filter>
+        <meta-data android:name="android.appwidget.provider"
+            android:resource="@xml/today_widget" />
+    </receiver>
+
+        <!-- IntentService used for today widget -->
+        <service android:name=".widget.TodayWidgetIntentService"/>
+
+        <!-- Detail Widget -->
+        <receiver android:name=".widget.DetailWidgetProvider"
+            android:label="@string/title_widget_detail"
+            android:enabled="@bool/widget_detail_enabled">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.android.sunshine.app.ACTION_DATA_UPDATED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info_detail" />
+        </receiver>
+
+        <!-- service used for detail widget -->
+        <service android:name=".widget.DetailWidgetRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false"
+            android:enabled="@bool/widget_detail_enabled"/>
     </application>
 
 </manifest>

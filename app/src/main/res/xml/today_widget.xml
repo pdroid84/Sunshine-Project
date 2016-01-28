@@ -1,0 +1,12 @@
+<!-- for static data or data which is already loaded by syncadapter (in this case) the upatePeriodMillis can be set as zero-->
+<!-- any value other than sero to that field wakes up the device, alternatively use AlarmManager, refer developer site -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="@dimen/widget_today_min_width"
+    android:minHeight="@dimen/widget_today_min_height"
+    android:minResizeHeight="@dimen/widget_today_min_resize_height"
+    android:minResizeWidth="@dimen/widget_today_min_resize_width"
+    android:initialLayout="@layout/today_widget_layout_small"
+    android:previewImage="@drawable/sunshine_widget_preview"
+    android:resizeMode="horizontal"
+    android:updatePeriodMillis="0">
+</appwidget-provider>
