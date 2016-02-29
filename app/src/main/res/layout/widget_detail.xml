@@ -12,12 +12,12 @@
         android:paddingLeft="@dimen/abc_list_item_padding_horizontal_material"
         android:paddingRight="@dimen/abc_list_item_padding_horizontal_material"
         android:background="@color/primary">
-        <ImageView
-            android:layout_width="@dimen/list_icon"
-            android:layout_height="@dimen/list_icon"
-            android:contentDescription="@string/app_name"
-            android:layout_gravity="center"
-            android:src="@drawable/art_clear"/>
+        <!--<ImageView-->
+            <!--android:layout_width="@dimen/list_icon"-->
+            <!--android:layout_height="@dimen/list_icon"-->
+            <!--android:contentDescription="@string/app_name"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:src="@drawable/art_clear"/>-->
     <FrameLayout
         android:id="@+id/widget"
         android:layout_width="0dp"

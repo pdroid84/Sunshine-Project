@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="http://schemas.android.com/tools">
-    <string name="app_name">Sunshine</string>
+    <string name="app_name">DebWeather</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh" translatable="false">Refresh</string>
@@ -110,8 +110,8 @@
     <string name="attribution_text">Powered by Google</string>
 
     <!-- Strings related to Widgets -->
-    <string name="title_widget_today">Sunshine Today</string>
-    <string name="title_widget_detail">Sunshine Detail</string>
+    <string name="title_widget_today">DebWeather Today</string>
+    <string name="title_widget_detail">DebWeather Detail</string>
     <string name="widget_list_empty_view_text">No weather data available for display</string>
 
     <!-- Strings related to Muzei Source -->
